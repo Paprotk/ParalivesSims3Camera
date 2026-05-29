@@ -70,6 +70,7 @@ namespace ParalivesSims3Camera
 
             if (isPanning)
             {
+                player.CameraCurrentCharacterFollowTarget = 0UL;
                 player.IsMouseRotatingTheCamera = false;
                 freeCamera.IsMouseDraggingView = false;
                 
@@ -91,7 +92,7 @@ namespace ParalivesSims3Camera
                                 * speedAttenuation
                                 * (generalSettings.CameraMoveSensitivity * 0.01f)
                                 * Time.unscaledDeltaTime
-                                * 3f; //Might be too slow
+                                * 4.5f;
 
                 var translation = new Vector3(
                     (offset.x / Screen.width)  * moveSpeed,
