@@ -11,6 +11,7 @@ namespace ParalivesSims3Camera
     public class Plugin : BaseUnityPlugin
     {
         internal static ManualLogSource Log;
+        public static bool Swapped;
         private void Awake()
         {
             Log = Logger;
@@ -46,6 +47,7 @@ namespace ParalivesSims3Camera
                 rightClick.ApplyBindingOverride(rightIndex, "<Mouse>/middleButton");
                 middleClick.ApplyBindingOverride(middleIndex, "<Mouse>/rightButton");
                 Plugin.Log.LogInfo("Mouse buttons swapped successfully");
+                Plugin.Swapped = true;
             }
             catch (System.Exception e)
             {
@@ -57,11 +59,18 @@ namespace ParalivesSims3Camera
     [HarmonyPatch(typeof(UpdateFreeCamera), "UpdateForPlayer")]
     public class PatchFreeCameraUpdate
     {
+        
         static Vector2 panStartPosition;
         static bool isPanning = false;
 
         static void Prefix(Player player)
         {
+            if (!Plugin.Swapped)
+            {
+                SwapButtons.Run();
+                Plugin.Swapped = true;
+            }
+            if (player.State == GameStates.CharacterCreator) return;
             var hybridPlayer = PlayerManager.Instance.GetHybridPlayer(player.PlayerIndex);
             var freeCamera = hybridPlayer.HybridCamera.FreeCamera;
             var inputManager = InputManager.Instance;
