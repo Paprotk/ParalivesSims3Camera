@@ -19,10 +19,21 @@ namespace ParalivesSims3Camera
         }
     }
 
-    [HarmonyPatch(typeof(Setting.KeyBindings), "LoadAndApplyKeyRebindings")]
+    [HarmonyPatch(typeof(PlayerManager), "Awake")]
     public class PatchKeyBindings
     {
-        static void Postfix()
+        static void Postfix() => SwapButtons.Run();
+    }
+
+    [HarmonyPatch(typeof(Setting.KeyBindings), "OnCompiled")]
+    public class PatchKeyBindingsOnCompiled
+    {
+        static void Postfix() => SwapButtons.Run();
+    }
+
+    public static class SwapButtons
+    {
+        public static void Run()
         {
             try
             {
@@ -67,9 +78,10 @@ namespace ParalivesSims3Camera
             {
                 isPanning = false;
             }
-
+            
             if (isPanning)
             {
+                CursorManager.Instance.CurrentCursorGUID = Settings.Get<Cursors>().MoveItemCursor;
                 player.CameraCurrentCharacterFollowTarget = 0UL;
                 player.IsMouseRotatingTheCamera = false;
                 freeCamera.IsMouseDraggingView = false;
